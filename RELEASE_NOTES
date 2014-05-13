@@ -1,57 +1,12 @@
 ---- RELEASE NOTES  ---------------------------------------------------------------------
 	ooPinChangeInt Release Notes
 
-	This is the ooPinChangeInt library for the Arduino.
-	See google code project for latest bugs and info http://code.google.com/p/arduino-oopinchangeint/
+This is the ooPinChangeInt library for the Arduino. See the accompanying README file for
+Description, License, and Acknowledgments.
 
-	This library provides an extension to the interrupt support for arduino by adding pin change
-	interrupts, giving a way for users to have interrupts drive off of any pin (ATmega328-based
-	Arduinos) and by the Port B, J, and K pins on the Arduino Mega and its ilk.
+See google code project for latest bugs and info http://code.google.com/p/arduino-oopinchangeint/
+See the Github page for the latest development code: https://github.com/GreyGnome/ooPinChangeInt
 
-	Library is derived from and begins with the PinChangeInt v 1.3 code.  See http://code.google.com/p/arduino-pinchangeint/
-
----- LICENSE ----------------------------------------------------------------------------
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
----- ACKNOWLEDGEMENTS --------------------------------------------------------------------
-	This library was originally written by Chris J. Klick, Robot builder and all around geek, who said of it,
-		"HI, Yeah, I wrote the original PCint library. It was a bit of a hack and the new one has better
-		features.  I intended the code to be freely usable.  Didn't really think about a license.  Feel
-		free to use it in your code: I hereby grant you permission."
-	Thanks, Chris! A hack? I dare say not, if I have taken this any further it's merely by standing on the
-	shoulders of giants. This library was the best "tutorial" I found on Arduino Pin Change Interrupts
-	and because of that I decided to continue to maintain and (hopefully) improve it. We, the Arduino
-	community of robot builders and geeks, owe you a great debt of gratitude for your hack- a hack in
-	the finest sense.
-
-	The library was then picked up by Lex Talionis, who created the Google Code website. We all owe a debt
-	of thanks to Lex, too, for all his hard work! He is currently the other official maintainer of this
-	code.
-
-	Chris' original PCInt Arduino Playground example is here: http://www.arduino.cc/playground/Main/PcInt
-
-	Many thanks to all the contributors who have contributed bug fixes, code, and suggestions
-	to this project: 
-	John Boiles and Baziki (who added fixes to PcInt), Maurice Beelen, nms277, Akesson Karlpetter, and
-	Orly Andico for various fixes to this code, Rob Tillaart for some excellent code reviews and nice
-	optimizations, Andre' Franken for a good bug report that kept me thinking, cserveny.tamas a special
-	shout out for providing the MEGA code to PinChangeInt- Thanks!
-
-	Regarding the MEGA and friends, Cserveny says: "J is mostly useless, because of the hardware UART. I was
-	not able to get pin change notifications from the TX pin (14), so only 15 left. All other pins are not
-	connected on the arduino boards."
-	
 ---- VERSIONS ----------------------------------------------------------------------------
 Version 1.05(beta) Mon May 12 07:53:30 CDT 2014
 After a 1.5 year hiatus, I'm back on the Arduino pony, so to speak. Cossjunk has recently contacted me about issues with the code so I have revisited it. The following changes were made:
@@ -108,5 +63,3 @@ Other bugfixes that follow the PinChangeInt-2.17beta release:
 	used to support another library.  See the Tigger library and example, for an example.)
 
 	Code uses the cbiface library, which is a much simplified and renamed version of cb.h
-	---- VERSIONS ----------------------------------------------------------------------------
-
