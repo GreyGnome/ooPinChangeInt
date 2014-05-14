@@ -35,7 +35,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
----- ACKNOWLEDGEMENTS --------------------------------------------------------------------
+---- ACKNOWLEDGMENTS ---------------------------------------------------------------------
 This library was originally written by Chris J. Klick, Robot builder and all around geek, who said of it,
 	"HI, Yeah, I wrote the original PCint library. It was a bit of a hack and the new one has better
 	features.  I intended the code to be freely usable.  Didn't really think about a license.  Feel
