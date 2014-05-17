@@ -8,6 +8,11 @@ See google code project for latest bugs and info http://code.google.com/p/arduin
 See the Github page for the latest development code: https://github.com/GreyGnome/ooPinChangeInt
 
 ---- VERSIONS ----------------------------------------------------------------------------
+Version 1.06-rc1 Sat May 17 05:57:12 CDT 2014
+New versioning scheme, kind if like the Linux kernel. It seems to be a good one.
+
+Now we are working our way towards Version 1.06. Along the way, we'll have "release candidates" which are beta versions. Once complete, the "-rc" suffix will be dropped and we will be on Version 1.06. Similarly for future versions.
+
 Version 1.05(beta) Mon May 12 07:53:30 CDT 2014
 After a 1.5 year hiatus, I'm back on the Arduino pony, so to speak. Cossjunk has recently contacted me about issues with the code so I have revisited it. The following changes were made:
 - Fixed to #define NO_PORTA_PINCHAGES on the MEGA. MEGA does not have pin change interrupts on that port.
