@@ -11,8 +11,7 @@ This library provides an extension to the interrupt support for arduino by addin
 interrupts, giving a way for users to have interrupts drive off of any pin (ATmega328-based
 Arduinos), by the Port B, J, and K pins on the Arduino Mega and its ilk, and on the appropriate
 ports (including Port A) on the Sanguino and its ilk.  Regarding the MEGA and friends, Cserveny
-says: "J is mostly useless, because of the hardware UART. I was not able to get pin change
-notifications from the TX pin (14), so only 15 left. All other pins are not connected on the
+says: "J is mostly useless, because of the hardware UART...  (many) pins are not connected on the
 arduino boards."
 
 The library is derived from and begins with the PinChangeInt v 1.3 code.  See
@@ -59,3 +58,6 @@ John Boiles and Baziki (who added fixes to PcInt), Maurice Beelen, nms277, Akess
 Orly Andico for various fixes to this code, Rob Tillaart for some excellent code reviews and nice
 optimizations, Andre' Franken for a good bug report that kept me thinking, cserveny.tamas a special
 shout out for providing the MEGA code to PinChangeInt- Thanks!
+
+Many thanks to JRHelbert for fixing the PJ0 and PJ1 interrupt PCMSK1 issue... 06/2014
+

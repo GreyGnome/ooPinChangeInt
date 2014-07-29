@@ -68,3 +68,6 @@ Other bugfixes that follow the PinChangeInt-2.17beta release:
 	used to support another library.  See the Tigger library and example, for an example.)
 
 	Code uses the cbiface library, which is a much simplified and renamed version of cb.h
+
+Library begins with the PinChangeInt v 1.3 code.  See http://code.google.com/p/arduino-pinchangeint/
+Version 1.03beta Wed Nov 21 18:20:46 CST 2012

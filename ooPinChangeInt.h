@@ -1,105 +1,76 @@
-//	This is the ooPinChangeInt library for the Arduino.
-//	See google code project for latest bugs and info http://code.google.com/p/arduino-oopinchangeint/
+// Copyright 2010, 2011, 2012, 2013 2014 Michael Schwager, Lex Talonis, Chris J. Klick
+// This file is part of ooPinChangeInt.
+/*
+    ooPinChangeInt is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-// We use 4-character tabstops, so IN VIM:  <esc>:set ts=4 sw=4
-// ...that's: ESCAPE key, colon key, then "s-e-t SPACE key t-s = 4 SPACE key s-w = 4"
-//
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+// We use 4-character tabstops, so IN VIM:  <esc>:set ts=4 sw=4 sts=4
+// ...that's: ESCAPE key, colon key, then
+//		"s-e-t SPACE key t-s = 4 SPACE key s-w = 4 SPACE key s-t-s = 4"
+
+/*
+ *	This is the ooPinChangeInt library for the Arduino.
+	This library provides an extension to the interrupt support for arduino by adding pin change
+	interrupts, giving a way for users to have interrupts drive off of any pin (ATmega328-based
+	Arduinos) and by the Port B, J, and K pins on the Arduino Mega and its ilk.
+
+	See the README for license, acknowledgements, and other details.
+
+	See google code project for latest bugs and info http://code.google.com/p/arduino-oopinchangeint/
+	The latest source code is at https://github.com/GreyGnome/ooPinChangeInt
+	For more information Refer to avr-gcc header files, arduino source and atmega datasheet.
+
+	This library was derived from the PinChangeInt library, found at
+	http://code.google.com/p/arduino-pinchangeint/
+	Chris J. Klick started it all by creating a nice PinChangeInt example here at the Arduino
+	Playground: http://www.arduino.cc/playground/Main/PcInt
+
+*/
+
 //-------- define these in your sketch, if applicable ----------------------------------------------------------
-//-------- This must go ahead of the #include ooPinChangeInt.h statement in your sketch ------------------------
+//-------- These must go ahead of the #include ooPinChangeInt.h statement in your sketch -----------------------
 // You can reduce the memory footprint of this handler by declaring that there will be no pin change interrupts
 // on any one or two of the three ports.  If only a single port remains, the handler will be declared inline
 // reducing the size and latency of the handler.
 // #define NO_PORTB_PINCHANGES // to indicate that port b will not be used for pin change interrupts
 // #define NO_PORTC_PINCHANGES // to indicate that port c will not be used for pin change interrupts
 // #define NO_PORTD_PINCHANGES // to indicate that port d will not be used for pin change interrupts
+// --- Mega support ---
+// #define NO_PORTB_PINCHANGES // to indicate that port b will not be used for pin change interrupts
+// #define NO_PORTJ_PINCHANGES // to indicate that port j will not be used for pin change interrupts
+// #define NO_PORTK_PINCHANGES // to indicate that port k will not be used for pin change interrupts
+// In the Mega, there is no Port C, no Port D.  Instead, you get Port J and Port K.  Port B remains.
+// Port J, however, is practically useless because there is only 1 pin available for interrupts.  Most
+// of the Port J pins are not even connected to a header connection.  // </end> "Mega Support" notes
+// --- Sanguino, Mioduino support ---
+// #define NO_PORTA_PINCHANGES // to indicate that port a will not be used for pin change interrupts
+
 // You can reduce the code size by maybe 20 bytes, and you can speed up the interrupt routine
 // slightly by declaring that you don't care if the static variable PCintPort::pinState
 // is made available to your interrupt routine.
 // #define NO_PIN_STATE        // to indicate that you don't need the pinState
-//
-// define DISABLE_PCINT_MULTI_SERVICE below to limit the handler to servicing a single interrupt per invocation.
-// #define       DISABLE_PCINT_MULTI_SERVICE
+// #define DISABLE_PCINT_MULTI_SERVICE // to limit the handler to servicing a single interrupt per invocation.
 // #define GET_OOPCIVERSION   // to enable the uint16_t getOOPCIintVersion () function.
 //-------- define the above in your sketch, if applicable ------------------------------------------------------
 
 /*
 	ooPinChangeInt.h
 	---- VERSIONS ----------------------------------------------------------------------------
-	Library begins with the PinChangeInt v 1.3 code.  See http://code.google.com/p/arduino-pinchangeint/
+	...Moved to RELEASE_NOTES.
 
-	Version 1.03beta Wed Nov 21 18:20:46 CST 2012
-
-	Version 1.00 Sat Dec  3 22:56:20 CST 2011
-	Modified to use the new() operator and symbolic links instead of creating a pre-populated
-	array of pointers to the pins.  This consumes more flash, but makes possible some
-	additional C++ style functionality later.
-
-	Version 1.01 Thu Dec  8 21:29:11 CST 2011
-	Modified to use a C++ callback function.  The arduinoPin variable is no longer necessary,
-	as this creates a new methodology for using the library.
-
-	Version 1.02 Tue Mon Mar  5 18:37:28 CST 2012
-	All code moved into this .h file so as to make it possible to recognize #define's in the
-	user's sketch.
-
-	Added #ifdef LIBCALL_OOPINCHANGEINT.  Programmers using this library in another library
-	should define this macro, because this will allow you to #include it in your sketch AND
-	#include it in the library.
-    (As a matter of act, you must always #include this file in your sketch, even if it's only
-	used to support another library.  See the Tigger library and example, for an example.)
-
-	Code uses the cbiface library, which is a much simplified and renamed version of cb.h
-	---- VERSIONS ----------------------------------------------------------------------------
-	This is the ooPinChangeInt library for the Arduino.
-	See google code project for latest, bugs and info http://code.google.com/p/arduino-oopinchangeint/
-
-	This library provides an extension to the interrupt support for arduino by adding pin change
-	interrupts, giving a way for users to have interrupts drive off of any pin (ATmega328-based
-	Arduinos) and by the Port B, J, and K pins on the Arduino Mega and its ilk..
-
-	This library was originally written by Chris J. Klick, Robot builder and all around geek, who said of it,
-		"HI, Yeah, I wrote the original PCint library. It was a bit of a hack and the new one has better
-		features.  I intended the code to be freely usable.  Didn't really think about a license.  Feel
-		free to use it in your code: I hereby grant you permission."
-	Thanks, Chris! A hack? I dare say not, if I have taken this any further it's merely by standing on the
-	shoulders of giants. This library was the best "tutorial" I found on Arduino Pin Change Interrupts
-	and because of that I decided to continue to maintain and (hopefully) improve it. We, the Arduino
-	community of robot builders and geeks, owe you a great debt of gratitude for your hack- a hack in
-	the finest sense.
-
-	The library was then picked up by Lex Talionis, who created the Google Code website. We all owe a debt
-	of thanks to Lex, too, for all his hard work! He is currently the other official maintainer of this
-	code.
-
-	Chris' original PCInt Arduino Playground example here: http://www.arduino.cc/playground/Main/PcInt
-
-	Many thanks to all the contributors who have contributed bug fixes, code, and suggestions
-	to this project: 
-	John Boiles and Baziki (who added fixes to PcInt), Maurice Beelen, nms277, Akesson Karlpetter, and
-	Orly Andico for various fixes to this code, Rob Tillaart for some excellent code reviews and nice
-	optimizations, Andre' Franken for a good bug report that kept me thinking, cserveny.tamas a special
-	shout out for providing the MEGA code to PinChangeInt- Thanks!
-
-	Regarding the MEGA and friends, Cserveny says: "J is mostly useless, because of the hardware UART. I was
-	not able to get pin change notifications from the TX pin (14), so only 15 left. All other pins are not
-	connected on the arduino boards."
-	
-	LICENSE
-
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-	*/
+	See the README file for the License and more details.
+*/
 
 #ifndef ooPinChangeInt_h
 #define	ooPinChangeInt_h
@@ -131,7 +102,7 @@
 * must use some logic to actually implement a per-pin interrupt service.
 */
 
-/* Pin to interrupt map:
+/* Pin to interrupt map (atmega168 and 328 only):
 * D0-D7 = PCINT 16-23 = PCIR2 = PD = PCIE2 = pcmsk2
 * D8-D13 = PCINT 0-5 = PCIR0 = PB = PCIE0 = pcmsk0
 * A0-A5 (D14-D19) = PCINT 8-13 = PCIR1 = PC = PCIE1 = pcmsk1
@@ -153,6 +124,8 @@
         #define INLINE_PCINT inline
     #endif
 #else
+	#define NO_PORTJ_PINCHANGES
+	#define NO_PORTK_PINCHANGES
 	#if defined(__AVR_ATmega644P__) || defined(__AVR_ATmega644__)
 		#ifndef NO_PORTA_PINCHANGES
 			#define __USE_PORT_A
@@ -196,6 +169,7 @@ protected:
 		PCintPin() :
 		mode(0) {}
 		CallBackInterface* 	pinCallBack;
+		uint8_t		arduinoPin;
 		uint8_t 	mode;
 		uint8_t		mask;
 		#ifndef NO_PIN_STATE
@@ -221,6 +195,9 @@ protected:
 // ********************************************************************************************************
 
 #ifdef   LIBCALL_OOPINCHANGEINT // LIBCALL_OOPINCHANGEINT *************************************************
+#ifdef __USE_PORT_A
+extern PCintPort portA;
+#endif
 extern PCintPort portB;
 extern PCintPort portC;
 extern PCintPort portD;
@@ -230,6 +207,26 @@ extern PCintPort portK;
 #endif
 #else // LIBCALL_OOPINCHANGEINT
 uint8_t PCintPort::curr=0;
+
+// ATMEGA 644 
+//
+#if defined(__AVR_ATmega644P__) || defined(__AVR_ATmega644__) // Sanguino, Mosquino uino bobino bonanafannafofino, me my momino...
+
+#ifndef NO_PORTA_PINCHANGES
+PCintPort portA=PCintPort(1, 0,PCMSK0); // port PA==1  (from Arduino.h, Arduino version 1.0)
+#endif
+#ifndef NO_PORTB_PINCHANGES
+PCintPort portB=PCintPort(2, 1,PCMSK1); // port PB==2  (from Arduino.h, Arduino version 1.0)
+#endif
+#ifndef NO_PORTC_PINCHANGES
+PCintPort portC=PCintPort(3, 2,PCMSK2); // port PC==3  (also in pins_arduino.c, Arduino version 022)
+#endif
+#ifndef NO_PORTD_PINCHANGES
+PCintPort portD=PCintPort(4, 3,PCMSK3); // port PD==4
+#endif
+
+#else // others
+
 #ifndef NO_PORTB_PINCHANGES
 PCintPort portB=PCintPort(2, 0,PCMSK0); // port PB==2  (from Arduino.h, Arduino version 1.0)
 #endif
@@ -241,6 +238,8 @@ PCintPort portC=PCintPort(3, 1,PCMSK1); // port PC==3  (also in pins_arduino.c, 
 #ifndef NO_PORTD_PINCHANGES
 PCintPort portD=PCintPort(4, 2,PCMSK2); // port PD==4
 #endif
+
+#endif // defined __AVR_ATmega644__
 
 #ifdef __USE_PORT_JK
 
@@ -261,37 +260,41 @@ PCintPort portK=PCintPort(11,2,PCMSK2); // port PK==11
 static PCintPort *lookupPortNumToPort( int portNum ) {
     PCintPort *port = NULL;
 
-        switch (portNum) {
+    switch (portNum) {
+#ifndef NO_PORTA_PINCHANGES
+	case 1:
+		port=&portA;
+#endif
 #ifndef NO_PORTB_PINCHANGES
-        case 2:
-                port=&portB;
-                break;
+    case 2:
+        port=&portB;
+        break;
 #endif
 #ifndef NO_PORTC_PINCHANGES
-        case 3:
-                port=&portC;
-                break;
+    case 3:
+		port=&portC;
+		break;
 #endif
 #ifndef NO_PORTD_PINCHANGES
-        case 4:
-                port=&portD;
-                break;
+	case 4:
+		port=&portD;
+		break;
 #endif
 #ifdef __USE_PORT_JK
 
 #ifndef NO_PORTJ_PINCHANGES
-        case 10:
-                port=&portJ;
-                break;
+	case 10:
+		port=&portJ;
+		break;
 #endif
 
 #ifndef NO_PORTK_PINCHANGES
-        case 11:
-                port=&portK;
-                break;
+	case 11:
+		port=&portK;
+		break;
 #endif
 
-#endif
+#endif // __USE_PORT_JK
     }
 
     return port;
@@ -302,7 +305,17 @@ void PCintPort::enable(PCintPin* p, CallBackInterface* cbIface, uint8_t mode) {
     // ...The final steps; at this point the interrupt is enabled on this pin.
     p->mode=mode;
     p->pinCallBack=cbIface;
+#ifndef NO_PORTJ_PINCHANGES
+	// A big shout out to jrhelbert for this fix! Thanks!!!
+	if ((p->arduinoPin == 14) || (p->arduinoPin == 15)) {
+		portPCMask |= (p->mask << 1); // PORTJ's PCMSK1 is a little odd...
+	}
+	else {
+		portPCMask |= p->mask;
+	}
+#else
     portPCMask |= p->mask;
+#endif
     if ((p->mode == RISING) || (p->mode == CHANGE)) portRisingPins |= p->mask;
     if ((p->mode == FALLING) || (p->mode == CHANGE)) portFallingPins |= p->mask;
     PCICR |= PCICRbit;
@@ -326,6 +339,7 @@ int8_t PCintPort::addPin(uint8_t arduinoPin, CallBackInterface* cbIface, uint8_t
 	// Create pin p:  fill in the data
 	PCintPin* p=new PCintPin;
 	if (p == NULL) return(-1);
+	p->arduinoPin = arduinoPin;
 	p->mode = mode;
 	p->next=NULL;
 	p->mask = bitmask; // the mask
@@ -334,6 +348,8 @@ int8_t PCintPort::addPin(uint8_t arduinoPin, CallBackInterface* cbIface, uint8_t
 	if (firstPin == NULL) firstPin=p;
 	else tmp->next=p;
 #ifdef DEBUG
+	// TODO: use a bytebuffer instead of Serial.print(). Serial.print() no longer
+	// works in interrupt content.
 	Serial.print("addPin. pin given: "); Serial.print(arduinoPin, DEC), Serial.print (" pin stored: ");
 	int addr = (int) p;
 	Serial.print(" instance addr: "); Serial.println(addr, HEX);
@@ -381,7 +397,17 @@ void PCintPort::detachInterrupt(uint8_t arduinoPin)
 		if (current->mask == mask) { // found the target
 			uint8_t oldSREG = SREG;
 			cli(); // disable interrupts
+#ifndef NO_PORTJ_PINCHANGES
+			// A big shout out to jrhelbert for this fix! Thanks!!!
+			if ((arduinoPin == 14) || (arduinoPin == 15)) {
+				port->portPCMask &= ~(mask << 1); // PORTJ's PCMSK1 is a little odd...
+			}
+			else {
+				port->portPCMask &= ~mask; // disable the mask entry.
+			}
+#else
 			port->portPCMask &= ~mask; // disable the mask entry.
+#endif
 			if (port->portPCMask == 0) PCICR &= ~(port->PCICRbit);
 			port->portRisingPins &= ~mask; port->portFallingPins &= ~mask;
 			SREG = oldSREG; // Restore register; reenables interrupts

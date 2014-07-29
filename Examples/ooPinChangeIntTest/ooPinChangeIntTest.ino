@@ -1,7 +1,7 @@
 // ooPinChangeIntTest
 // version 1.0 Wed Feb 15 07:25:09 CST 2012
 // version 1.1 Wed Nov 21 18:20:46 CST 2012 Modified to test the new detachInterrupt() of ooPinChangeInt version 1.03beta.
-// version 1.2 Fri May  9 07:25:45 CDT 2014 Cleanup to eliminate compile warnings.
+// version 1.2 Fri May  9 07:25:45 CDT 2014 Cleanup to eliminate compile warnings
 //      Also added code so that detach/attachInterrupt() can add different pushbutton object method calls.
 
 // See the Wiki at http://code.google.com/p/arduino-pinchangeint/wiki for more information.
@@ -195,11 +195,10 @@ void loop() {
   uint8_t count;
   char outchar;
   
-  cli(); outchar=(char)printBuffer.get(); sei();
-  while (outchar != 0) {
+  do {
     cli(); outchar=(char)printBuffer.get(); sei();
-    Serial.print(outchar);
-  };
+    if (outchar != 0) { Serial.print(outchar); }
+  } while (outchar != 0);
   if ((now - begintime) > 1000) {
     Serial.print(".");
     if (printBuffer.checkError()) {
