@@ -8,6 +8,12 @@ See google code project for latest bugs and info http://code.google.com/p/arduin
 See the Github page for the latest development code: https://github.com/GreyGnome/ooPinChangeInt
 
 ---- VERSIONS ----------------------------------------------------------------------------
+Version 1.06-rc2 Tue Jul 29 11:55:15 CDT 2014
+jrhelbert found the bug that made PORTJ not work correctly on the Arduino Mega! Now
+Ports J0 and 1 (Arduino pins 14 and 15) are available for Pin Change Interrupts on the Mega! Thanks,
+JR. This release includes that fix, some minor code and comment cleanup, and a small fix to
+Examples/ooPinChangeIntTest.ino.
+
 Version 1.06-rc1 Sat May 17 05:57:12 CDT 2014
 New versioning scheme, kind if like the Linux kernel. It seems to be a good one.
 
